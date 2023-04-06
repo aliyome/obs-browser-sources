@@ -163,6 +163,33 @@
         };
       }
 
+      function switchScene(parameters) {
+        const date = new Date();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+        const interval = parameters.work + parameters.break;
+        const minutesInInterval = minutes % interval;
+        if (seconds === 0) {
+          if (minutesInInterval === 0) {
+            switchToWorkScene();
+          } else if (minutesInInterval === parameters.work) {
+            switchToBreakScene();
+          }
+        }
+      }
+
+      function switchToBreakScene() {
+        if (window.obsstudio) {
+          window.obsstudio.setCurrentScene("Break");
+        }
+      }
+
+      function switchToWorkScene() {
+        if (window.obsstudio) {
+          window.obsstudio.setCurrentScene("Work");
+        }
+      }
+
       setInterval(function () {
         const parameters = getParameters();
 
@@ -175,6 +202,8 @@
 
         const remainingPathElement = document.getElementById("timer-circle-outer");
         remainingPathElement.setAttribute("stroke-dasharray", calculateRemainingPathDashArray(parameters));
+
+        switchScene(parameters);
       }, 1000);
     </script>
   </body>
