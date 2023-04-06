@@ -123,7 +123,7 @@
         const minutes = date.getMinutes();
         const interval = parameters.work + parameters.break;
         const minutesInInterval = minutes % interval;
-        const sessionNumber = (date.getHours() - 5) % 24;
+        const sessionNumber = (date.getHours() - 8) % 24;
         if (minutesInInterval < parameters.work) {
           return `POMODORO#${sessionNumber}`;
         } else {
