@@ -11,6 +11,7 @@
         --color-primary: #94B49F;
         --color-second: #ECB390;
         --color-accent: #DF7861;
+        --color-gray: #888888;
       }
 
       html {
@@ -41,6 +42,12 @@
         font-family: 'Lalezar', monospace;
         font-size: 0.3rem;
         text-shadow: black 1px 1px 5px;
+      }
+
+      #timer-label-localtime {
+        color: var(--color-gray);
+        font-size: 0.3rem;
+        line-height: 0.2;
       }
 
       .timer {
@@ -103,6 +110,7 @@
         <div>
           <div id="timer-label-value"></div>
           <div id="timer-label-description"></div>
+          <div id="timer-label-localtime"></div>
         </div>
       </div>
     </div>
@@ -157,6 +165,13 @@
         ].join(":");
       }
 
+      function calculateLocalTime() {
+        const date = new Date();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return [zeroPadding(hours, 2), zeroPadding(minutes, 2)].join(":") + " JST";
+      }
+
       function getParameters() {
         return {
           break: 10,
@@ -203,6 +218,9 @@
 
         const remainingPathElement = document.getElementById("timer-circle-outer");
         remainingPathElement.setAttribute("stroke-dasharray", calculateRemainingPathDashArray(parameters));
+
+        const localTimeElement = document.getElementById("timer-label-localtime");
+        localTimeElement.textContent = calculateLocalTime();
 
         switchScene(parameters);
       }, 1000);
