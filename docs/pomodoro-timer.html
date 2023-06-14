@@ -134,9 +134,9 @@
         const minutesInInterval = minutes % interval;
         const sessionNumber = (date.getHours() - 8) % 24;
         if (minutesInInterval < parameters.work) {
-          return `Session ${sessionNumber}`;
+          return `Session ${sessionNumber}/${parameters.total_session}`;
         } else {
-          return `Break ${sessionNumber}`;
+          return `Break ${sessionNumber}/${parameters.total_session}`;
         }
       }
 
@@ -176,6 +176,7 @@
         return {
           break: 10,
           work: 50,
+          total_session: 6,
         };
       }
 
