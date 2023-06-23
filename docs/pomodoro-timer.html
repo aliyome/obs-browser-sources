@@ -128,11 +128,11 @@
       }
 
       function calculateSessionText(parameters) {
-        const date = new Date();
-        const minutes = date.getMinutes();
+        const now = new Date();
+        const minutes = now.getMinutes();
         const interval = parameters.work + parameters.break;
         const minutesInInterval = minutes % interval;
-        const sessionNumber = (date.getHours() - 8) % 24;
+        const sessionNumber = (now.getHours() - parameters.start_at.getHours() + 1) % 24;
         if (minutesInInterval < parameters.work) {
           return `Session ${sessionNumber}/${parameters.total_session}`;
         } else {
@@ -173,10 +173,16 @@
       }
 
       function getParameters() {
+        const params = new URL(window.location.href).searchParams;
+        const breakString = params.get("break") || "10";
+        const workString = params.get("work") || "50";
+        const totalSessionString = params.get("total") || "6";
+        const startAtString = params.get("start_at") || "09:00";
         return {
-          break: 10,
-          work: 50,
-          total_session: 6,
+          break: parseInt(breakString, 10),
+          work: parseInt(workString, 10),
+          total_session: parseInt(totalSessionString, 10),
+          start_at: new Date("2000-01-01 " + startAtString),
         };
       }
 
