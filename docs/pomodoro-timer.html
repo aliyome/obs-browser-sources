@@ -119,20 +119,33 @@
         return (Array(length).join("0") + number).slice(-length);
       }
 
+      function getElapsedMinutesFromStart(parameters) {
+        const now = new Date();
+        const startToday = new Date();
+        startToday.setHours(parameters.start_at.getHours(), parameters.start_at.getMinutes(), 0, 0);
+        
+        let elapsedMs = now.getTime() - startToday.getTime();
+        if (elapsedMs < 0) {
+          const startYesterday = new Date(startToday);
+          startYesterday.setDate(startYesterday.getDate() - 1);
+          elapsedMs = now.getTime() - startYesterday.getTime();
+        }
+        
+        return Math.floor(elapsedMs / (1000 * 60));
+      }
+
       function calculateRemainingPathDashArray(parameters) {
-        const date = new Date();
-        const minutes = date.getMinutes();
+        const elapsedMinutes = getElapsedMinutesFromStart(parameters);
         const interval = parameters.work + parameters.break;
-        const minutesInInterval = minutes % interval;
+        const minutesInInterval = elapsedMinutes % interval;
         return `${283 * minutesInInterval / interval} 283`;
       }
 
       function calculateSessionText(parameters) {
-        const now = new Date();
-        const minutes = now.getMinutes();
+        const elapsedMinutes = getElapsedMinutesFromStart(parameters);
         const interval = parameters.work + parameters.break;
-        const minutesInInterval = minutes % interval;
-        const sessionNumber = (now.getHours() - parameters.start_at.getHours() + 1) % 24;
+        const minutesInInterval = elapsedMinutes % interval;
+        const sessionNumber = Math.floor(elapsedMinutes / interval) + 1;
         if (minutesInInterval < parameters.work) {
           return `Session ${sessionNumber}/${parameters.total_session}`;
         } else {
@@ -141,22 +154,21 @@
       }
 
       function calculateTimerClassName(parameters) {
-        const date = new Date();
-        const minutes = date.getMinutes();
+        const elapsedMinutes = getElapsedMinutesFromStart(parameters);
         const interval = parameters.work + parameters.break;
-        const minutesInInterval = minutes % interval;
+        const minutesInInterval = elapsedMinutes % interval;
         return minutesInInterval < parameters.work ? "work" : "break";
       }
 
       function calculateTimerText(parameters) {
         const date = new Date();
-        const minutes = date.getMinutes();
         const seconds = date.getSeconds();
         const remainingSeconds = 59 - seconds;
+        const elapsedMinutes = getElapsedMinutesFromStart(parameters);
         const interval = parameters.work + parameters.break;
-        const minutesInInterval = minutes % interval;
+        const minutesInInterval = elapsedMinutes % interval;
         const remainingMinutes =
-          (minutes < parameters.work ? parameters.work : interval) -
+          (minutesInInterval < parameters.work ? parameters.work : interval) -
           minutesInInterval -
           1;
         return [
